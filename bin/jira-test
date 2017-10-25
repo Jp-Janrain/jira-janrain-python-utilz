@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+
+from __future__ import print_function
+
+from jira_janrain import TamEpic
+
+if __name__ == "__main__":
+    tam = TamEpic('DEL-1144')
+    tam.get_worklogs(authors='jrowan, anya')
