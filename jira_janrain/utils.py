@@ -30,3 +30,6 @@ def valid_date(date):
     except ValueError:
         raise "'{}' is not a valid date format.\n Please use: YYYY-MM-DD".format(
             date)
+
+def jira_date(date_string):
+    return dt.strptime(date_string, '%Y-%m-%d')

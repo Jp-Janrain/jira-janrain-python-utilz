@@ -2,7 +2,7 @@ from __future__ import print_function
 
 from jira import JIRA
 
-from .utils import get_config
+from .utils import get_config, jira_date
 
 ENV_VARS = {
     'JIRA_USER_NAME': '',
@@ -31,22 +31,30 @@ class Rest2():
             issues.extend(results)
         return issues
 
-    def get_worklogs(self, jql, start=None, end=None, authors=None):
+    def get_worklogs(self, jql, start_date=None, end_date=None, authors=None):
         worklogs = []
-        if start:
-            jql += ' AND worklogDate >= {}'.format(start)
-        if end:
-            jql += ' AND worklogDate <= {}'.format(end)
+        if start_date:
+            jql += ' AND worklogDate >= {}'.format(start_date)
+        if end_date:
+            jql += ' AND worklogDate <= {}'.format(end_date)
         if authors:
             jql += ' AND worklogAuthor in ({})'.format(authors)
-        issues = self.search_all(jql, fields='worklog')
+        issues = self.search_all(jql, fields='summary, worklog')
         for issue in issues:
             if issue.fields.worklog.total > 20:
                 issue_worklogs = self.api.worklogs(issue.key)
             else:
                 issue_worklogs = issue.fields.worklog.worklogs
-            print('{}: {}'.format(issue.key, len(issue_worklogs)))
-            for worklog in issue_worklogs:
-                if authors and worklog.author.key in authors.split(', '):
-                    print(worklog.author.key)
-    # TODO: filter worklog results to logs that match time/person filters
+            for worklog in list(issue_worklogs):
+                worklog.issue = issue
+                if authors and worklog.author.key not in authors.split(', '):
+                    issue_worklogs.remove(worklog)
+                    continue
+                if start_date and jira_date(worklog.started.split('T')[0]) < jira_date(start_date):
+                    issue_worklogs.remove(worklog)
+                    continue
+                if end_date and jira_date(worklog.started.split('T')[0]) > jira_date(end_date):
+                    issue_worklogs.remove(worklog)
+                    continue
+            worklogs.extend(issue_worklogs)
+        return worklogs
