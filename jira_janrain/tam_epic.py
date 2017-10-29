@@ -11,6 +11,7 @@ class TamEpic(Rest2):
         worklog'''
 
         self.key = issue_key
+        self.url = 'https://janrain.atlassian.net/browse/{}'.format(issue_key)
         self.issue = Rest2().api.issue(issue_key, fields=_fields)
         self.raw = self.issue.raw
 
