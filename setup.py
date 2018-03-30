@@ -14,7 +14,7 @@ def list_of_files_in_directory(path):
 scripts = list_of_files_in_directory('bin')
 
 setup(
-    name='JIRA/Janrain Utilities',
+    name='jira-janrain',
     version='0.1dev',
     long_description=open('README.md').read(),
     author = "Jp Rowan",
