@@ -29,5 +29,8 @@ setup(
     install_requires = [
         'requests',
         'jira',
+    ],
+    dependency_links = [
+        'https://github.com/pycontribs/jiratarball/master#egg=jira'
     ]
 )
