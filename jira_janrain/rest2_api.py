@@ -10,6 +10,7 @@ ENV_VARS = {
     'JIRA_DOMAIN': 'https://janrain.atlassian.net'
 }
 
+
 class Rest2():
 
     def __init__(self):
@@ -31,7 +32,9 @@ class Rest2():
             issues.extend(results)
         return issues
 
-    def get_worklogs(self, jql, start_date=None, end_date=None, authors=None):
+    def get_worklogs(self, jql=None, start_date=None, end_date=None, authors=None):
+        jql = 'issuetype in (standardIssueTypes(), subTaskIssueTypes())' \
+            if not jql else jql
         worklogs = []
         if start_date:
             jql += ' AND worklogDate >= {}'.format(start_date)
